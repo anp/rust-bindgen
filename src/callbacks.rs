@@ -4,6 +4,7 @@ pub use crate::ir::analysis::DeriveTrait;
 pub use crate::ir::derive::CanDerive as ImplementsTrait;
 pub use crate::ir::enum_ty::{EnumVariantCustomBehavior, EnumVariantValue};
 pub use crate::ir::int::IntKind;
+use std::any::Any;
 use std::fmt;
 use std::panic::UnwindSafe;
 
@@ -25,7 +26,7 @@ impl Default for MacroParsingBehavior {
 
 /// A trait to allow configuring different kinds of types in different
 /// situations.
-pub trait ParseCallbacks: fmt::Debug + UnwindSafe {
+pub trait ParseCallbacks: Any + fmt::Debug + UnwindSafe {
     /// This function will be run on every macro that is identified.
     fn will_parse_macro(&self, _name: &str) -> MacroParsingBehavior {
         MacroParsingBehavior::Default
@@ -93,6 +94,11 @@ pub trait ParseCallbacks: fmt::Debug + UnwindSafe {
         _name: &str,
         _derive_trait: DeriveTrait,
     ) -> Option<ImplementsTrait> {
+        None
+    }
+
+    /// TODO find a way to delete this from this PR
+    fn as_any(&self) -> Option<&dyn Any> {
         None
     }
 }
